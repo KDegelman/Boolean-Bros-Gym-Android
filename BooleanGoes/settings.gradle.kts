@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Boolean Goes"
+rootProject.name = "BooleanGoes"
 include(":app")
  
