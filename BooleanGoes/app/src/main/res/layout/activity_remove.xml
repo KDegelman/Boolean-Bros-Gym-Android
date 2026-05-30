@@ -20,6 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+            android:id="@+id/logoBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
@@ -45,6 +46,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/pageTitleBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
@@ -72,22 +74,22 @@
         <!-- This SUCKS, but I don't want to fix it. -->
         <FrameLayout
             android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="78dp"
+            android:layout_height="78dp"
             android:layout_gravity="top|start"
             android:clickable="true"
             android:focusable="true" >
 
             <TextView
+                android:id="@+id/arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:gravity="center"
+                android:includeFontPadding="false"
                 android:text="◀"
                 android:textColor="#FFFFFF"
-                android:includeFontPadding="false"
-                android:textSize="50sp"
-                android:gravity="center" />
-
+                android:textSize="50sp" />
         </FrameLayout>
 
 
