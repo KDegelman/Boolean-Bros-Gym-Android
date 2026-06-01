@@ -78,7 +78,8 @@
             android:layout_height="78dp"
             android:layout_gravity="top|start"
             android:clickable="true"
-            android:focusable="true" >
+            android:focusable="true"
+            android:visibility="gone" >
 
             <TextView
                 android:id="@+id/arrow"
