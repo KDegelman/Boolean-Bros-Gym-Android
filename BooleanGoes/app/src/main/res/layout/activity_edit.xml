@@ -238,6 +238,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="12dp"
+            android:text="Member#" />
+
+        <EditText
+            android:id="@+id/editMemberNum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:enabled="false"
+            android:hint="Member#" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginStart="14dp"
             android:text="Full Name" />
@@ -252,6 +267,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
+            android:text="Gender" />
+
+        <Spinner
+            android:id="@+id/spinnerGender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="14dp"
             android:text="Date of Birth" />
 
         <EditText
@@ -259,18 +287,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="YYYY-MM-DD" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:text="Gender" />
-
-        <EditText
-            android:id="@+id/editGender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Male / Female" />
 
         <TextView
             android:layout_width="wrap_content"

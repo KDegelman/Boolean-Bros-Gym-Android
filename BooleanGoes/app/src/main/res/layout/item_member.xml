@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/memberItemRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:padding="12dp"
+        android:background="@drawable/rounded_panel"
+        >
+
+        <TextView
+            android:id="@+id/textMemberHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="#0001  John Smith"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/memberDetailsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView android:id="@+id/textMemberDob" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DOB: 1990-01-01" />
+            <TextView android:id="@+id/textMemberGender" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gender: Male" />
+            <TextView android:id="@+id/textMemberPhone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Phone: 306-555-1234" />
+            <TextView android:id="@+id/textMemberEmail" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email: john@email.com" />
+            <TextView android:id="@+id/textMemberCity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="City: Regina" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnExpandMember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▼" />
+
+            <Button
+                android:id="@+id/btnEditMemberItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit" />
+
+            <Button
+                android:id="@+id/btnRemoveMemberItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove" />
+
+        </LinearLayout>
+
+    </LinearLayout>
