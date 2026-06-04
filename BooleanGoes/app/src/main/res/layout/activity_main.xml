@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#A91B1B"
     tools:context=".MainActivity">
-
+<!-- Is the Frame for the bar at the top, contains the layout of all the titles and buttons -->
     <FrameLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -19,6 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+<!-- A layout is added to contain the two part stylized logo(IDK if there is a better way) -->
         <LinearLayout
             android:id="@+id/logoBox"
             android:layout_width="wrap_content"
@@ -52,7 +53,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal">
-            <!-- This can interact with the cup and arrow if page width is too small -->
+<!-- This can interact with the cup and arrow if page width is too small (future proofing) -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,7 +72,11 @@
             android:src="@drawable/shaker_logo"
             android:contentDescription="Logo" />
 
-        <!-- This SUCKS, but I don't want to fix it. -->
+<!-- This SUCKS, but I don't want to fix it.
+
+It is a layout allowing a "dynamically" sized clickable button with a text character as an icon.
+
+Is currently invisible(future proof) -->
         <FrameLayout
             android:id="@+id/btnBack"
             android:layout_width="78dp"
@@ -96,6 +101,7 @@
 
     </FrameLayout>
 
+<!-- Is a Layout for the panel holding the buttons and panel title(Second part forces the Admin Panel to be below the top bar). -->
     <LinearLayout
         android:id="@+id/buttonContainer"
         android:layout_width="0dp"
