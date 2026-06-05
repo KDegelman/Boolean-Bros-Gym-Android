@@ -16,6 +16,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import android.util.Log;
+
 public class CreateActivity extends AppCompatActivity {
 
     private EditText editFullName;
@@ -93,6 +96,11 @@ public class CreateActivity extends AppCompatActivity {
         String email = editEmail.getText().toString().trim();
         String city = editCity.getText().toString().trim();
 
+        if (fullName.contains(",") || city.contains(",") || email.contains(",")) {
+            Toast.makeText(this, "Fields cannot contain commas.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
 
         boolean valid = true;
         valid &= requireField(editFullName);
@@ -139,12 +147,58 @@ public class CreateActivity extends AppCompatActivity {
                 .show();
     }
 
+    private String[] splitFullName(String fullName) {
+        String cleanedName = fullName.trim();
+
+        String[] parts = cleanedName.split("\\s+", 2);
+
+        String firstName = parts[0];
+        String lastName = "";
+
+        if (parts.length > 1) {
+            lastName = parts[1];
+        }
+
+        return new String[]{firstName, lastName};
+    }
+
     private void createMember(String fullName, String dateOfBirth, String gender, String phoneNumber, String email, String city) {
 
         // TODO: replace this with actual database insert.
-        // database.memberDao().insert(new Member(fullName, dateOfBirth, gender, phoneNumber, email, city));
 
-        Toast.makeText(this, "Member creation hook reached.", Toast.LENGTH_SHORT).show();
+        String[] nameParts = splitFullName(fullName);
+        String firstName = nameParts[0];
+        String lastName = nameParts[1];
+
+        String command = "CREATE,0,"
+                + firstName + ","
+                + lastName + ","
+                + dateOfBirth + ","
+                + email + ","
+                + phoneNumber + ","
+                + gender + ","
+                + city;
+
+        Log.d("SERVER_COMMAND", command);
+
+        ServerClient.sendCommand(command, new ServerClient.ServerCallback() {
+            @Override
+            public void onResult(ArrayList<String> lines) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CreateActivity.this, String.join("\n", lines), Toast.LENGTH_LONG).show();
+                    clearForm();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(CreateActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show();
+                });
+            }
+        });
+
+        //Toast.makeText(this, "Member creation hook reached.", Toast.LENGTH_SHORT).show();
 
         clearForm();
     }

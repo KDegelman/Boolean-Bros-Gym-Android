@@ -1,6 +1,7 @@
 package com.example.booleangoes;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
 
 public class RemoveActivity extends AppCompatActivity {
 
@@ -34,6 +37,7 @@ public class RemoveActivity extends AppCompatActivity {
     private EditText removeCity;
 
     private Spinner removeSpinnerGender;
+
 
     private Button btnRemoveSearch;
     private Button btnRemoveMember;
@@ -159,6 +163,29 @@ public class RemoveActivity extends AppCompatActivity {
         });
     }
 
+    private Member parseMemberLine(String line) {
+        try {
+            String memberNumber = getBetween(line, "MemberID: ", ", First Name:");
+            String firstName = getBetween(line, "First Name: ", " LastName:");
+            String lastName = getBetween(line, "LastName: ", "Date of Birth");
+            String dob = getBetween(line, "Date of Birth", ", Email:");
+            String email = getBetween(line, "Email: ", ", Phone Number:");
+            String phone = getBetween(line, "Phone Number: ", ", Gender:");
+            String gender = getBetween(line, "Gender: ", ", City of Residence:");
+            String city = line.substring(line.indexOf("City of Residence:") + "City of Residence:".length()).trim();
+
+            return new Member(memberNumber, firstName + " " + lastName, dob, gender, phone, email, city);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getBetween(String text, String start, String end) {
+        int startIndex = text.indexOf(start) + start.length();
+        int endIndex = text.indexOf(end);
+        return text.substring(startIndex, endIndex).trim();
+    }
+
     private void attemptSearchMember() {
         String memberNum = searchMemberNum.getText().toString().trim();
         String name = searchFullName.getText().toString().trim();
@@ -166,13 +193,56 @@ public class RemoveActivity extends AppCompatActivity {
         String phone = searchPhoneNumber.getText().toString().trim();
         String email = searchEmail.getText().toString().trim();
 
-        //For testing
+        if (name.contains(",") || email.contains(",")) {
+            Toast.makeText(this, "Fields cannot contain commas.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!memberNum.isEmpty()) {
+            String command = "READ," + memberNum;
+
+            Log.d("SERVER_COMMAND", command);
+
+            ServerClient.sendCommand(command, new ServerClient.ServerCallback() {
+                @Override
+                public void onResult(ArrayList<String> lines) {
+                    runOnUiThread(() -> {
+                        if (lines.isEmpty() || lines.get(0).contains("not found")) {
+                            showNotFoundDialog();
+                            return;
+                        }
+
+                        Member member = parseMemberLine(lines.get(0));
+
+                        if (member == null) {
+                            Toast.makeText(RemoveActivity.this,
+                                    "Could not read server response.",
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        loadMemberIntoRemoveFields(member);
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() ->
+                            Toast.makeText(RemoveActivity.this,
+                                    "Server error: " + error,
+                                    Toast.LENGTH_LONG).show()
+                    );
+                }
+            });
+
+            //For testing
             if (memberNum.equals("42069")) {
                 loadFakeUser();
             } else {
                 showNotFoundDialog();
             }
+
+
             return;
         }
 
@@ -196,6 +266,30 @@ public class RemoveActivity extends AppCompatActivity {
         } else {
             showNotFoundDialog();
         }
+        return;
+    }
+
+    private void loadMemberIntoRemoveFields(Member member) {
+        currentMemberNumber = member.memberNumber;
+
+        removeMemberNum.setText(member.memberNumber);
+        removeFullName.setText(member.fullName);
+        removeDateOfBirth.setText(member.dateOfBirth);
+        removePhoneNumber.setText(member.phoneNumber);
+        removeEmail.setText(member.email);
+        removeCity.setText(member.city);
+
+        if ("Male".equalsIgnoreCase(member.gender))
+            removeSpinnerGender.setSelection(1);
+        else if ("Female".equalsIgnoreCase(member.gender))
+            removeSpinnerGender.setSelection(2);
+        else
+            removeSpinnerGender.setSelection(0);
+
+        clearSearchFields();
+
+        removeSearchCluster.setVisibility(View.GONE);
+        removeMemberCluster.setVisibility(View.VISIBLE);
     }
 
     //For testing
@@ -234,7 +328,39 @@ public class RemoveActivity extends AppCompatActivity {
 
     private void removeMember() {
         // TODO: replace this with real database.
-        Toast.makeText(this, "Remove hook reached.", Toast.LENGTH_SHORT).show();
+
+        String command = "DELETE," + currentMemberNumber;
+
+        Log.d("SERVER_COMMAND", command);
+
+        ServerClient.sendCommand(command, new ServerClient.ServerCallback() {
+            @Override
+            public void onResult(ArrayList<String> lines) {
+                runOnUiThread(() -> {
+                    Toast.makeText(
+                            RemoveActivity.this,
+                            String.join("\n", lines),
+                            Toast.LENGTH_LONG
+                    ).show();
+
+                    finish(); // returns to View page if opened from View
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(
+                            RemoveActivity.this,
+                            "Server error: " + error,
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
+            }
+        });
+
+
+        //Toast.makeText(this, "Remove hook reached.", Toast.LENGTH_SHORT).show();
 
         if (openedFromView)
             finish();

@@ -2,6 +2,7 @@ package com.example.booleangoes;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -158,6 +161,29 @@ public class EditActivity extends AppCompatActivity {
         });
     }
 
+    private Member parseMemberLine(String line) {
+        try {
+            String memberNumber = getBetween(line, "MemberID: ", ", First Name:");
+            String firstName = getBetween(line, "First Name: ", " LastName:");
+            String lastName = getBetween(line, "LastName: ", "Date of Birth");
+            String dob = getBetween(line, "Date of Birth", ", Email:");
+            String email = getBetween(line, "Email: ", ", Phone Number:");
+            String phone = getBetween(line, "Phone Number: ", ", Gender:");
+            String gender = getBetween(line, "Gender: ", ", City of Residence:");
+            String city = line.substring(line.indexOf("City of Residence:") + "City of Residence:".length()).trim();
+
+            return new Member(memberNumber, firstName + " " + lastName, dob, gender, phone, email, city);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getBetween(String text, String start, String end) {
+        int startIndex = text.indexOf(start) + start.length();
+        int endIndex = text.indexOf(end);
+        return text.substring(startIndex, endIndex).trim();
+    }
+
     private void attemptSearchMember() {
         String memberNum = searchMemberNum.getText().toString().trim();
         String name = searchFullName.getText().toString().trim();
@@ -165,11 +191,48 @@ public class EditActivity extends AppCompatActivity {
         String phone = searchPhoneNumber.getText().toString().trim();
         String email = searchEmail.getText().toString().trim();
 
+        if (name.contains(",") || email.contains(",")) {
+            Toast.makeText(this, "Fields cannot contain commas.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (!memberNum.isEmpty()) {
             if (!name.isEmpty()) searchFullName.setHintTextColor(Color.RED);
             if (!dob.isEmpty()) searchDateOfBirth.setHintTextColor(Color.RED);
             if (!phone.isEmpty()) searchPhoneNumber.setHintTextColor(Color.RED);
             if (!email.isEmpty()) searchEmail.setHintTextColor(Color.RED);
+
+            String command = "READ," + memberNum;
+
+            Log.d("SERVER_COMMAND", command);
+
+            ServerClient.sendCommand(command, new ServerClient.ServerCallback() {
+                @Override
+                public void onResult(ArrayList<String> lines) {
+                    runOnUiThread(() -> {
+                        if (lines.isEmpty() || lines.get(0).contains("not found")) {
+                            showNotFoundDialog();
+                            return;
+                        }
+
+                        Member member = parseMemberLine(lines.get(0));
+
+                        if (member == null) {
+                            Toast.makeText(EditActivity.this, "Could not read server response.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        loadMemberIntoEditFields(member);
+                    });
+                }
+
+                @Override
+                public void onError(String error) {
+                    runOnUiThread(() ->
+                            Toast.makeText(EditActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
+                    );
+                }
+            });
 
             //For testing
             if (memberNum.equals("42069")) {
@@ -202,6 +265,30 @@ public class EditActivity extends AppCompatActivity {
             showNotFoundDialog();
         }
     }
+
+    private void loadMemberIntoEditFields(Member member) {
+        currentMemberNumber = member.memberNumber;
+
+        editMemberNum.setText(member.memberNumber);
+        editFullName.setText(member.fullName);
+        editDateOfBirth.setText(member.dateOfBirth);
+        editPhoneNumber.setText(member.phoneNumber);
+        editEmail.setText(member.email);
+        editCity.setText(member.city);
+
+        if ("Male".equalsIgnoreCase(member.gender))
+            spinnerGender.setSelection(1);
+        else if ("Female".equalsIgnoreCase(member.gender))
+            spinnerGender.setSelection(2);
+        else
+            spinnerGender.setSelection(0);
+
+        clearSearchFields();
+
+        editSearchCluster.setVisibility(View.GONE);
+        editMemberCluster.setVisibility(View.VISIBLE);
+    }
+
     //For testing
     private void loadFakeUser() {
         currentMemberNumber = "42069";
@@ -254,10 +341,44 @@ public class EditActivity extends AppCompatActivity {
                 .show();
     }
 
+    private String[] splitFullName(String fullName) {
+        String cleanedName = fullName.trim();
+
+        String[] parts = cleanedName.split("\\s+", 2);
+
+        String firstName = parts[0];
+        String lastName = "";
+
+        if (parts.length > 1) {
+            lastName = parts[1];
+        }
+
+        return new String[]{firstName, lastName};
+    }
     private void updateMember(String fullName, String dob, String gender, String phone, String email, String city) {
         // TODO: replace this with real database.
 
-        Toast.makeText(this, "Update hook reached.", Toast.LENGTH_SHORT).show();
+        String[] nameParts = splitFullName(fullName);
+        String firstName = nameParts[0];
+        String lastName = nameParts[1];
+
+        ArrayList<String> commands = new ArrayList<>();
+
+        commands.add("UPDATE," + currentMemberNumber + ",First_Name," + firstName);
+        commands.add("UPDATE," + currentMemberNumber + ",Last_Name," + lastName);
+        commands.add("UPDATE," + currentMemberNumber + ",Date_of_Birth," + dob);
+        commands.add("UPDATE," + currentMemberNumber + ",Email," + email);
+        commands.add("UPDATE," + currentMemberNumber + ",Phone_Number," + phone);
+        commands.add("UPDATE," + currentMemberNumber + ",Gender," + gender);
+        commands.add("UPDATE," + currentMemberNumber + ",City_of_Residence," + city);
+
+        for (String command : commands) {
+            Log.d("SERVER_COMMAND", command);
+        }
+
+        sendUpdateCommands(commands, 0);
+
+        //Toast.makeText(this, "Update hook reached.", Toast.LENGTH_SHORT).show();
 
         if (openedFromView)
             finish();
@@ -267,6 +388,39 @@ public class EditActivity extends AppCompatActivity {
             editSearchCluster.setVisibility(View.VISIBLE);
         }
     }
+
+    private void sendUpdateCommands(ArrayList<String> commands, int index) {
+        if (index >= commands.size()) {
+            runOnUiThread(() -> {
+                Toast.makeText(EditActivity.this, "Update commands sent.", Toast.LENGTH_LONG).show();
+                finish();
+            });
+            return;
+        }
+
+        String command = commands.get(index);
+
+        Log.d("SERVER_COMMAND", command);
+
+        ServerClient.sendCommand(command, new ServerClient.ServerCallback() {
+            @Override
+            public void onResult(ArrayList<String> lines) {
+                sendUpdateCommands(commands, index + 1);
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() -> {
+                    Toast.makeText(
+                            EditActivity.this,
+                            "Server error: " + error,
+                            Toast.LENGTH_LONG
+                    ).show();
+                });
+            }
+        });
+    }
+
     //TODO: I should remove the colour changing it's stupid in its current state.
     private boolean requireField(EditText field) {
         if (field.getText().toString().trim().isEmpty()) {

@@ -9,10 +9,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import android.util.Log;
 
 public class ViewActivity extends AppCompatActivity {
 
@@ -25,8 +29,11 @@ public class ViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view);
 
         connectViews();
-        setupFakeMembers();
+        loadMembersFromServer();
         setupRecyclerView();
+//Test cases
+        //testReadAllRaw();
+        //setupFakeMembers();
 
         //I had to add this to make it work, I got it from the internet so I don't fully understand why it works or why I need it
         //It fixes the app from being behind the top info bar
@@ -46,6 +53,58 @@ public class ViewActivity extends AppCompatActivity {
     }
     private void connectViews() {
         memberRecyclerView = findViewById(R.id.memberRecyclerView);
+    }
+
+    private Member parseMemberLine(String line) {
+        try {
+            String memberNumber = getBetween(line, "MemberID: ", ", First Name:");
+            String firstName = getBetween(line, "First Name: ", " LastName:");
+            String lastName = getBetween(line, "LastName: ", " Date of Birth");
+            String dob = getBetween(line, "Date of Birth", ", Email:");
+            String email = getBetween(line, "Email: ", ", Phone Number:");
+            String phone = getBetween(line, "Phone Number: ", ", Gender:");
+            String gender = getBetween(line, "Gender: ", ", City of Residence:");
+            String city = line.substring(line.indexOf("City of Residence:") + "City of Residence:".length()).trim();
+
+            return new Member(memberNumber, firstName + " " + lastName, dob, gender, phone, email, city);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private String getBetween(String text, String start, String end) {
+        int startIndex = text.indexOf(start) + start.length();
+        int endIndex = text.indexOf(end);
+
+        return text.substring(startIndex, endIndex).trim();
+    }
+    private void loadMembersFromServer() {
+        Log.d("SERVER_COMMAND", "READALL");
+        ServerClient.sendCommand("READALL", new ServerClient.ServerCallback() {
+            @Override
+            public void onResult(ArrayList<String> lines) {
+                runOnUiThread(() -> {
+                    members.clear();
+
+                    for (String line : lines) {
+                        Member member = parseMemberLine(line);
+                        if (member != null) {
+                            members.add(member);
+                        }
+                    }
+
+                    memberRecyclerView.getAdapter().notifyDataSetChanged();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() ->
+                        Toast.makeText(ViewActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
+                );
+            }
+        });
     }
 
     //For testing
@@ -73,7 +132,33 @@ public class ViewActivity extends AppCompatActivity {
         ));
     }
 
+    private void testReadAllRaw() {
+        Log.d("SERVER_COMMAND", "READALL");
+        ServerClient.sendCommand("READALL", new ServerClient.ServerCallback() {
+            @Override
+            public void onResult(ArrayList<String> lines) {
+                runOnUiThread(() -> {
+                    String raw = String.join("\n", lines);
+
+                    new AlertDialog.Builder(ViewActivity.this)
+                            .setTitle("READALL Raw Server Response")
+                            .setMessage(raw)
+                            .setPositiveButton("OK", null)
+                            .show();
+                });
+            }
+
+            @Override
+            public void onError(String error) {
+                runOnUiThread(() ->
+                        Toast.makeText(ViewActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
+                );
+            }
+        });
+    }
+
     private void setupRecyclerView() {
+        members = new ArrayList<>();
         MemberAdapter adapter = new MemberAdapter(this, members);
 
         memberRecyclerView.setLayoutManager(new LinearLayoutManager(this));
