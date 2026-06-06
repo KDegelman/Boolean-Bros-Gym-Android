@@ -174,8 +174,8 @@ public class CreateActivity extends AppCompatActivity {
                 + firstName + ","
                 + lastName + ","
                 + dateOfBirth + ","
-                + email + ","
                 + phoneNumber + ","
+                + email + ","
                 + gender + ","
                 + city;
 

@@ -238,9 +238,10 @@ public class RemoveActivity extends AppCompatActivity {
             //For testing
             if (memberNum.equals("42069")) {
                 loadFakeUser();
-            } else {
-                showNotFoundDialog();
             }
+//            else {
+//                showNotFoundDialog();
+//            }
 
 
             return;

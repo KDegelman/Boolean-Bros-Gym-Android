@@ -237,9 +237,10 @@ public class EditActivity extends AppCompatActivity {
             //For testing
             if (memberNum.equals("42069")) {
                 loadFakeUser();
-            } else {
-                showNotFoundDialog();
             }
+//            else {
+//                showNotFoundDialog();
+//            }
 
             return;
         }
@@ -380,13 +381,13 @@ public class EditActivity extends AppCompatActivity {
 
         //Toast.makeText(this, "Update hook reached.", Toast.LENGTH_SHORT).show();
 
-        if (openedFromView)
-            finish();
-        else {
-            clearEditFields();
-            editMemberCluster.setVisibility(View.GONE);
-            editSearchCluster.setVisibility(View.VISIBLE);
-        }
+//        if (openedFromView)
+//            finish();
+//        else {
+//            clearEditFields();
+//            editMemberCluster.setVisibility(View.GONE);
+//            editSearchCluster.setVisibility(View.VISIBLE);
+//        }
     }
 
     private void sendUpdateCommands(ArrayList<String> commands, int index) {
