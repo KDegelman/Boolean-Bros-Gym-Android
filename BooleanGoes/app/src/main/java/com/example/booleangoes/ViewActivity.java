@@ -29,7 +29,7 @@ public class ViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view);
 
         connectViews();
-        loadMembersFromServer();
+        //loadMembersFromServer();
         setupRecyclerView();
 //Test cases
         //testReadAllRaw();
@@ -163,6 +163,13 @@ public class ViewActivity extends AppCompatActivity {
 
         memberRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         memberRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadMembersFromServer();
     }
 
 }

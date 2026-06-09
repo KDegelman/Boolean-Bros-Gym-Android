@@ -43,9 +43,8 @@ public class EditActivity extends AppCompatActivity {
 
     private String currentMemberNumber = "";
     private Button btnEditCancel;
-
     private EditText editMemberNum;
-
+    private FrameLayout loadingOverlay;
     private boolean openedFromView = false;
 
     @Override
@@ -141,6 +140,7 @@ public class EditActivity extends AppCompatActivity {
         btnEditSearch = findViewById(R.id.btnEditSearch);
         btnUpdateMember = findViewById(R.id.btnUpdateMember);
         btnEditCancel = findViewById(R.id.btnEditCancel);
+        loadingOverlay = findViewById(R.id.loadingOverlay);
     }
 
     private void setupButtons() {
@@ -224,6 +224,7 @@ public class EditActivity extends AppCompatActivity {
 
                         loadMemberIntoEditFields(member);
                     });
+                    loadingOverlay.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -231,6 +232,7 @@ public class EditActivity extends AppCompatActivity {
                     runOnUiThread(() ->
                             Toast.makeText(EditActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
                     );
+                    loadingOverlay.setVisibility(View.GONE);
                 }
             });
 
@@ -359,6 +361,8 @@ public class EditActivity extends AppCompatActivity {
     private void updateMember(String fullName, String dob, String gender, String phone, String email, String city) {
         // TODO: replace this with real database.
 
+        loadingOverlay.setVisibility(View.VISIBLE);
+
         String[] nameParts = splitFullName(fullName);
         String firstName = nameParts[0];
         String lastName = nameParts[1];
@@ -407,6 +411,7 @@ public class EditActivity extends AppCompatActivity {
             @Override
             public void onResult(ArrayList<String> lines) {
                 sendUpdateCommands(commands, index + 1);
+
             }
 
             @Override
@@ -418,6 +423,7 @@ public class EditActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG
                     ).show();
                 });
+
             }
         });
     }
