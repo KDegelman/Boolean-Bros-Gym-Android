@@ -1,43 +1,49 @@
 package com.example.booleangoes;
 
 import android.os.Bundle;
-import android.widget.FrameLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
+import android.util.Log;
+
+import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import android.content.Intent;
-import android.widget.Toast;
-import androidx.appcompat.app.AlertDialog;
 
+//Lets you create the scrolling menus
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import android.util.Log;
+
 
 public class ViewActivity extends AppCompatActivity {
 
+
     private RecyclerView memberRecyclerView;
     private ArrayList<Member> members;
+    private FrameLayout btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view);
-
-        connectViews();
-        //loadMembersFromServer();
-        setupRecyclerView();
-//Test cases
-        //testReadAllRaw();
-        //setupFakeMembers();
-
-        //I had to add this to make it work, I got it from the internet so I don't fully understand why it works or why I need it
-        //It fixes the app from being behind the top info bar
         View main = findViewById(R.id.main);
+
+        //Attaches the recycler & buttons to ID's
+        memberRecyclerView = findViewById(R.id.memberRecyclerView);
+
+        btnBack = findViewById(R.id.btnBack);
+
+
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
+
 
         ViewCompat.setOnApplyWindowInsetsListener(main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -45,43 +51,42 @@ public class ViewActivity extends AppCompatActivity {
             return insets;
         });
 
-        FrameLayout btnBack = findViewById(R.id.btnBack);
 
-        btnBack.setOnClickListener(v -> {
-            finish();
-        });
-    }
-    private void connectViews() {
-        memberRecyclerView = findViewById(R.id.memberRecyclerView);
-    }
-
-    private Member parseMemberLine(String line) {
-        try {
-            String memberNumber = getBetween(line, "MemberID: ", ", First Name:");
-            String firstName = getBetween(line, "First Name: ", " LastName:");
-            String lastName = getBetween(line, "LastName: ", " Date of Birth");
-            String dob = getBetween(line, "Date of Birth", ", Email:");
-            String email = getBetween(line, "Email: ", ", Phone Number:");
-            String phone = getBetween(line, "Phone Number: ", ", Gender:");
-            String gender = getBetween(line, "Gender: ", ", City of Residence:");
-            String city = line.substring(line.indexOf("City of Residence:") + "City of Residence:".length()).trim();
-
-            return new Member(memberNumber, firstName + " " + lastName, dob, gender, phone, email, city);
-
-        } catch (Exception e) {
-            return null;
-        }
+        //Fills the list with DB Members
+        setupRecyclerView();
+//Test cases
+        //testReadAllRaw();
+        //setupFakeMembers();
+        //loadMembersFromServer();
     }
 
-    private String getBetween(String text, String start, String end) {
-        int startIndex = text.indexOf(start) + start.length();
-        int endIndex = text.indexOf(end);
+    private void setupRecyclerView() {
+        members = new ArrayList<>();
+        //Calls for MemberAdapter to turn the data in to something readable
+        MemberAdapter adapter = new MemberAdapter(this, members);
 
-        return text.substring(startIndex, endIndex).trim();
+        //Arrange cards vertically
+        memberRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        memberRecyclerView.setAdapter(adapter);
     }
+
+    //When the page is opened this runs everytime(refreshes the page)
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadMembersFromServer();
+    }
+
+    //Sends a request to the server to grab the members entries
     private void loadMembersFromServer() {
+
+        //Logcat entry
         Log.d("SERVER_COMMAND", "READALL");
+
+        //Sends server the READALL command, which sends back all the member data
         ServerClient.sendCommand("READALL", new ServerClient.ServerCallback() {
+            //If the server replies successfully, positive pop up and adds member to the array
             @Override
             public void onResult(ArrayList<String> lines) {
                 runOnUiThread(() -> {
@@ -98,8 +103,10 @@ public class ViewActivity extends AppCompatActivity {
                 });
             }
 
+            //If the server call is negative, negative popup with hopefully an explanation
             @Override
             public void onError(String error) {
+                Log.e("SERVER_ERROR", error);
                 runOnUiThread(() ->
                         Toast.makeText(ViewActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
                 );
@@ -107,7 +114,36 @@ public class ViewActivity extends AppCompatActivity {
         });
     }
 
-    //For testing
+    //Takes the server data from the DB and parses it into a format that can be used
+    private Member parseMemberLine(String line) {
+        try {
+            //Each line sends off a request for getBetween to find the data that's in-between two categories(collums) and then stores it in a string
+            String memberNumber = getBetween(line, "MemberID: ", ", First Name:");
+            String firstName = getBetween(line, "First Name: ", " LastName:");
+            String lastName = getBetween(line, "LastName: ", " Date of Birth");
+            String dob = getBetween(line, "Date of Birth", ", Email:");
+            String email = getBetween(line, "Email: ", ", Phone Number:");
+            String phone = getBetween(line, "Phone Number: ", ", Gender:");
+            String gender = getBetween(line, "Gender: ", ", City of Residence:");
+            String city = line.substring(line.indexOf("City of Residence:") + "City of Residence:".length()).trim();
+
+            //It then pieces it all together here in the format that android is using
+            return new Member(memberNumber, firstName + " " + lastName, dob, gender, phone, email, city);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    //Gets given instructions to find the words in-between to points in the string
+    private String getBetween(String text, String start, String end) {
+        int startIndex = text.indexOf(start) + start.length();
+        int endIndex = text.indexOf(end);
+
+        return text.substring(startIndex, endIndex).trim();
+    }
+
+//For testing
     private void setupFakeMembers() {
         members = new ArrayList<>();
 
@@ -155,21 +191,6 @@ public class ViewActivity extends AppCompatActivity {
                 );
             }
         });
-    }
-
-    private void setupRecyclerView() {
-        members = new ArrayList<>();
-        MemberAdapter adapter = new MemberAdapter(this, members);
-
-        memberRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        memberRecyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        loadMembersFromServer();
     }
 
 }

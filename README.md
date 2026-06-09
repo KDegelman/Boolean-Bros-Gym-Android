@@ -4,17 +4,25 @@ This is an android project to create an mobile UI for interacting with the clien
 The Android application requires the companion Java Server project to be running before database functionality is available.
 
 TODO
-animated loading screen for edit
-look in to parent classes
-look in to all the hooks in one class
-views search filter
-upload spreadsheet
-Better data validation
-search based on two criteria(two fields search)
-small formatting discrepancies in xml's(order of id to layout to text etc)
-Page scrolling on all pages.
+animated loading screen for edit,
+look in to parent classes,
+look in to all the hooks in one class,
+views search filter,
+upload spreadsheet,
+Better data validation,
+search based on two criteria(two fields search),
+small formatting discrepancies in xml's(order of id to layout to text etc),
+Page scrolling on all pages,
+Spinner should go in helper class,
+debate whether back button with is only ever pressed once should be in its own method,
+If data base gets too large, laoding the whole thing everytime would be a bad idea,
+parseMemberLine should probably go in a helper class with getBetween,
+remove colour changing thing in edit, its stupid,
+make it so I can edit one collum at a time,
+splitFullName should go in a helper class,
+clearSearchFields MAYBE should go in a helper class,
 
-Update readme
+Update readme.
 
 
 # Boolean Bros Android Application
