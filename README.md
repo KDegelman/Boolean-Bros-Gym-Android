@@ -3,6 +3,20 @@ This is an android project to create an mobile UI for interacting with the clien
 
 The Android application requires the companion Java Server project to be running before database functionality is available.
 
+TODO
+animated loading screen for edit
+look in to parent classes
+look in to all the hooks in one class
+views search filter
+upload spreadsheet
+Better data validation
+search based on two criteria(two fields search)
+small formatting discrepancies in xml's(order of id to layout to text etc)
+Page scrolling on all pages.
+
+Update readme
+
+
 # Boolean Bros Android Application
 
 ## Requirements
