@@ -3,6 +3,7 @@ package com.example.booleangoes;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -23,30 +25,23 @@ public class RemoveActivity extends AppCompatActivity {
 
     private LinearLayout removeSearchCluster;
     private LinearLayout removeMemberCluster;
-
     private EditText searchMemberNum;
     private EditText searchFullName;
     private EditText searchDateOfBirth;
     private EditText searchPhoneNumber;
     private EditText searchEmail;
-
     private EditText removeFullName;
     private EditText removeDateOfBirth;
     private EditText removePhoneNumber;
     private EditText removeEmail;
     private EditText removeCity;
-
     private Spinner removeSpinnerGender;
-
-
     private Button btnRemoveSearch;
     private Button btnRemoveMember;
     private Button btnRemoveCancel;
-
     private String currentMemberNumber = "";
-
     private EditText removeMemberNum;
-
+    private FrameLayout btnBack;
     private boolean openedFromView = false;
 
     @Override
@@ -55,26 +50,75 @@ public class RemoveActivity extends AppCompatActivity {
         setContentView(R.layout.activity_remove);
         View main = findViewById(R.id.main);
 
-        connectViews();
-        setupButtons();
-        setupGenderSpinner();
 
-        //I had to add this to make it work, I got it from the internet so I don't fully understand why it works or why I need it
-        //It fixes the app from being behind the top info bar
+        removeSearchCluster = findViewById(R.id.removeSearchCluster);
+        removeMemberCluster = findViewById(R.id.removeMemberCluster);
+
+        searchMemberNum = findViewById(R.id.searchMemberNum);
+        searchFullName = findViewById(R.id.searchFullName);
+        searchDateOfBirth = findViewById(R.id.searchDateOfBirth);
+        searchPhoneNumber = findViewById(R.id.searchPhoneNumber);
+        searchEmail = findViewById(R.id.searchEmail);
+
+        removeMemberNum = findViewById(R.id.removeMemberNum);
+        removeFullName = findViewById(R.id.removeFullName);
+        removeDateOfBirth = findViewById(R.id.removeDateOfBirth);
+        removeSpinnerGender = findViewById(R.id.removeSpinnerGender);
+        removePhoneNumber = findViewById(R.id.removePhoneNumber);
+        removeEmail = findViewById(R.id.removeEmail);
+        removeCity = findViewById(R.id.removeCity);
+
+        btnRemoveSearch = findViewById(R.id.btnRemoveSearch);
+        btnRemoveMember = findViewById(R.id.btnRemoveMember);
+        btnRemoveCancel = findViewById(R.id.btnRemoveCancel);
+        btnBack = findViewById(R.id.btnBack);
+
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
+
+
+        String[] genderOptions = {"N/A", "Male", "Female"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                genderOptions
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        removeSpinnerGender.setAdapter(adapter);
+
+
         ViewCompat.setOnApplyWindowInsetsListener(main, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(0, systemBars.top, 0, 0);
             return insets;
         });
 
-        FrameLayout btnBack = findViewById(R.id.btnBack);
 
-        btnBack.setOnClickListener(v -> {
-            finish();
-        });
-
+        setupButtons();
         checkForIncomingMember();
+    }
 
+    private void setupButtons() {
+
+        btnRemoveSearch.setOnClickListener(v -> attemptSearchMember());
+
+        btnRemoveMember.setOnClickListener(v -> showRemoveConfirmation());
+
+        btnRemoveCancel.setOnClickListener(v -> {
+
+            if (openedFromView) {
+                finish();
+            } else {
+                clearRemoveFields();
+                removeMemberCluster.setVisibility(View.GONE);
+                removeSearchCluster.setVisibility(View.VISIBLE);
+            }
+
+        });
     }
 
     private void checkForIncomingMember() {
@@ -106,61 +150,6 @@ public class RemoveActivity extends AppCompatActivity {
 
         removeSearchCluster.setVisibility(View.GONE);
         removeMemberCluster.setVisibility(View.VISIBLE);
-    }
-
-    private void setupGenderSpinner() {
-        String[] genderOptions = {"N/A", "Male", "Female"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                genderOptions
-        );
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        removeSpinnerGender.setAdapter(adapter);
-    }
-    private void connectViews() {
-        removeSearchCluster = findViewById(R.id.removeSearchCluster);
-        removeMemberCluster = findViewById(R.id.removeMemberCluster);
-
-        searchMemberNum = findViewById(R.id.searchMemberNum);
-        searchFullName = findViewById(R.id.searchFullName);
-        searchDateOfBirth = findViewById(R.id.searchDateOfBirth);
-        searchPhoneNumber = findViewById(R.id.searchPhoneNumber);
-        searchEmail = findViewById(R.id.searchEmail);
-
-        removeMemberNum = findViewById(R.id.removeMemberNum);
-        removeFullName = findViewById(R.id.removeFullName);
-        removeDateOfBirth = findViewById(R.id.removeDateOfBirth);
-        removeSpinnerGender = findViewById(R.id.removeSpinnerGender);
-        removePhoneNumber = findViewById(R.id.removePhoneNumber);
-        removeEmail = findViewById(R.id.removeEmail);
-        removeCity = findViewById(R.id.removeCity);
-
-        btnRemoveSearch = findViewById(R.id.btnRemoveSearch);
-        btnRemoveMember = findViewById(R.id.btnRemoveMember);
-        btnRemoveCancel = findViewById(R.id.btnRemoveCancel);
-    }
-
-    private void setupButtons() {
-
-        btnRemoveSearch.setOnClickListener(v -> attemptSearchMember());
-
-        btnRemoveMember.setOnClickListener(v -> showRemoveConfirmation());
-
-        btnRemoveCancel.setOnClickListener(v -> {
-
-            if (openedFromView) {
-                finish();
-            } else {
-                clearRemoveFields();
-                removeMemberCluster.setVisibility(View.GONE);
-                removeSearchCluster.setVisibility(View.VISIBLE);
-            }
-
-        });
     }
 
     private Member parseMemberLine(String line) {
@@ -215,9 +204,7 @@ public class RemoveActivity extends AppCompatActivity {
                         Member member = parseMemberLine(lines.get(0));
 
                         if (member == null) {
-                            Toast.makeText(RemoveActivity.this,
-                                    "Could not read server response.",
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(RemoveActivity.this, "Could not read server response.", Toast.LENGTH_LONG).show();
                             return;
                         }
 
@@ -228,17 +215,15 @@ public class RemoveActivity extends AppCompatActivity {
                 @Override
                 public void onError(String error) {
                     runOnUiThread(() ->
-                            Toast.makeText(RemoveActivity.this,
-                                    "Server error: " + error,
-                                    Toast.LENGTH_LONG).show()
+                            Toast.makeText(RemoveActivity.this, "Server error: " + error, Toast.LENGTH_LONG).show()
                     );
                 }
             });
 
-            //For testing
-            if (memberNum.equals("42069")) {
-                loadFakeUser();
-            }
+//For testing
+//            if (memberNum.equals("42069")) {
+//                loadFakeUser();
+//            }
 //            else {
 //                showNotFoundDialog();
 //            }
@@ -258,16 +243,24 @@ public class RemoveActivity extends AppCompatActivity {
             return;
         }
 
-        //For testing
-        boolean fakeMatch =
-                name.equalsIgnoreCase("Fake User") || dob.equals("2000-01-1") || phone.equals("306 123 4567") || email.equalsIgnoreCase("FakeEmail@email.com");
-
-        if (fakeMatch) {
-            loadFakeUser();
-        } else {
-            showNotFoundDialog();
-        }
+//For testing
+//        boolean fakeMatch =
+//                name.equalsIgnoreCase("Fake User") || dob.equals("2000-01-1") || phone.equals("306 123 4567") || email.equalsIgnoreCase("FakeEmail@email.com");
+//
+//        if (fakeMatch) {
+//            loadFakeUser();
+//        } else {
+//            showNotFoundDialog();
+//        }
         return;
+    }
+
+    private void showNotFoundDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Member Not Found")
+                .setMessage("No member matched the search information. Please check the fields and try again.")
+                .setPositiveButton("Try Again", null)
+                .show();
     }
 
     private void loadMemberIntoRemoveFields(Member member) {
@@ -293,27 +286,15 @@ public class RemoveActivity extends AppCompatActivity {
         removeMemberCluster.setVisibility(View.VISIBLE);
     }
 
-    //For testing
-    private void loadFakeUser() {
-        currentMemberNumber = "42069";
-        removeMemberNum.setText(currentMemberNumber);
-        //removeMemberNum = "42069";
-        //removeMemberNum.setText(removeMemberNum);
-
-
-        removeFullName.setText("Fake User");
-        removeDateOfBirth.setText("2000-01-1");
-        removeSpinnerGender.setSelection(1);
-        removePhoneNumber.setText("306 123 4567");
-        removeEmail.setText("FakeEmail@email.com");
-        removeCity.setText("Regina");
-
-        clearSearchFields();
-
-        removeSearchCluster.setVisibility(View.GONE);
-        removeMemberCluster.setVisibility(View.VISIBLE);
+    private void clearSearchFields() {
+        searchMemberNum.setText("");
+        searchFullName.setText("");
+        searchDateOfBirth.setText("");
+        searchPhoneNumber.setText("");
+        searchEmail.setText("");
     }
 
+    //This is in attempt in Edit Why did I do it this way!?! I am too tired for this.
     private void showRemoveConfirmation() {
         String gender = removeSpinnerGender.getSelectedItem().toString();
         String message =
@@ -328,7 +309,6 @@ public class RemoveActivity extends AppCompatActivity {
     }
 
     private void removeMember() {
-        // TODO: replace this with real database.
 
         String command = "DELETE," + currentMemberNumber;
 
@@ -372,22 +352,6 @@ public class RemoveActivity extends AppCompatActivity {
         }
     }
 
-    private void showNotFoundDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Member Not Found")
-                .setMessage("No member matched the search information. Please check the fields and try again.")
-                .setPositiveButton("Try Again", null)
-                .show();
-    }
-
-    private void clearSearchFields() {
-        searchMemberNum.setText("");
-        searchFullName.setText("");
-        searchDateOfBirth.setText("");
-        searchPhoneNumber.setText("");
-        searchEmail.setText("");
-    }
-
     private void clearRemoveFields() {
         removeFullName.setText("");
         removeDateOfBirth.setText("");
@@ -398,4 +362,26 @@ public class RemoveActivity extends AppCompatActivity {
         //removeMemberNum = "";
         removeMemberNum.setText("");
     }
+
+    //For testing
+    private void loadFakeUser() {
+        currentMemberNumber = "42069";
+        removeMemberNum.setText(currentMemberNumber);
+        //removeMemberNum = "42069";
+        //removeMemberNum.setText(removeMemberNum);
+
+
+        removeFullName.setText("Fake User");
+        removeDateOfBirth.setText("2000-01-1");
+        removeSpinnerGender.setSelection(1);
+        removePhoneNumber.setText("306 123 4567");
+        removeEmail.setText("FakeEmail@email.com");
+        removeCity.setText("Regina");
+
+        clearSearchFields();
+
+        removeSearchCluster.setVisibility(View.GONE);
+        removeMemberCluster.setVisibility(View.VISIBLE);
+    }
+
 }

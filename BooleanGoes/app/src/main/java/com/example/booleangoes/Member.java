@@ -1,5 +1,6 @@
 package com.example.booleangoes;
 
+//Just a data container for member
 public class Member {
     public String memberNumber;
     public String fullName;

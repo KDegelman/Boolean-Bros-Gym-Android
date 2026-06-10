@@ -21,6 +21,9 @@ remove colour changing thing in edit, its stupid,
 make it so I can edit one collum at a time,
 splitFullName should go in a helper class,
 clearSearchFields MAYBE should go in a helper class,
+checkincomingmemeber could be made a helper with a little bit of effort,
+attemptSearchMemebr could be made a helper,
+Stream line showRemoveConfermation in remove, as it's different from edit,
 
 Update readme.
 

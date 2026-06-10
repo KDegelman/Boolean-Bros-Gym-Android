@@ -6,11 +6,15 @@ import java.util.ArrayList;
 
 public class ServerClient {
 
-    private static final String HOST = "10.0.2.2"; // emulator -> local PC
+    //Local host address
+    private static final String HOST = "10.0.2.2";
+    //Server address
     private static final int PORT = 1234;
 
     public interface ServerCallback {
+        //If server responds positively
         void onResult(ArrayList<String> lines);
+        //If no response or negative response
         void onError(String error);
     }
 
