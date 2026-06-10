@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/memberItemRoot"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="8dp"
-        android:padding="12dp"
-        android:background="@drawable/rounded_panel"
-        >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/memberItemRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="8dp"
+    android:padding="12dp"
+    android:background="@drawable/rounded_panel">
 
         <TextView
             android:id="@+id/textMemberHeader"
@@ -41,22 +40,51 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btnExpandMember"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="▼" />
-
-            <Button
                 android:id="@+id/btnEditMemberItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:textSize="12sp"
+                app:backgroundTint="#89CFF0"
+                app:cornerRadius="1dp"
+                app:strokeColor="#000000"
+                app:strokeWidth="1dp"
+                android:layout_marginHorizontal="4dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
+                android:visibility="gone"
                 android:text="Edit" />
 
             <Button
                 android:id="@+id/btnRemoveMemberItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Remove" />
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:layout_marginHorizontal="4dp"
+                android:text="Remove"
+                android:textSize="12sp"
+                app:backgroundTint="#89CFF0"
+                app:cornerRadius="1dp"
+                app:strokeColor="#000000"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
+                android:visibility="gone"
+                app:strokeWidth="1dp" />
+
+            <Button
+                android:id="@+id/btnExpandMember"
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:textSize="18sp"
+                app:backgroundTint="#89CFF0"
+                app:cornerRadius="1dp"
+                app:strokeColor="#000000"
+                app:strokeWidth="1dp"
+                android:layout_marginHorizontal="4dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:padding="4dp"
+                android:text="▼" />
 
         </LinearLayout>
 

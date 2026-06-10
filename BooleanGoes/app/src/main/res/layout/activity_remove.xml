@@ -8,6 +8,7 @@
     android:background="#A91B1B"
     tools:context=".MainActivity">
 
+<!-- Top Bar -->
     <FrameLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -19,6 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+<!-- Logo Name -->
         <LinearLayout
             android:id="@+id/logoBox"
             android:layout_width="wrap_content"
@@ -52,7 +54,8 @@
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal">
-            <!-- This can interact with the cup and arrow if page width is too small -->
+
+<!-- This can interact with the cup and arrow if page width is too small -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,7 +74,9 @@
             android:src="@drawable/shaker_logo"
             android:contentDescription="Logo" />
 
-        <!-- This SUCKS, but I don't want to fix it. -->
+<!-- This SUCKS, but I don't want to fix it.
+
+Back Button -->
         <FrameLayout
             android:id="@+id/btnBack"
             android:layout_width="78dp"
@@ -87,27 +92,33 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:text="◀"
                 android:textColor="#FFFFFF"
-                android:textSize="50sp" />
-        </FrameLayout>
+                android:textSize="50sp"
+                android:text="◀" />
 
+        </FrameLayout>
 
     </FrameLayout>
 
+<!-- The page often got too long so I added this -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
+
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+<!-- Box of usable scroll space -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+<!-- Is a Layout for the panel holding the buttons and panel title(Second part forces the Admin Panel to be below the top bar).
+
+Search menu(gets hidden after search)-->
     <LinearLayout
         android:id="@+id/removeSearchCluster"
         android:layout_width="match_parent"
@@ -152,11 +163,12 @@
             android:layout_marginBottom="16dp"
             android:background="#000000" />
 
+<!-- Two fields search(doesn't work with the DB) -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Or Two Fields"
+            android:text="Or Two Fields(WIP)"
             android:textColor="#928080" />
 
         <TextView
@@ -217,16 +229,18 @@
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12dp"
             android:textSize="18sp"
+            android:text="Search"
+
             app:backgroundTint="#89CFF0"
             app:cornerRadius="5dp"
             app:strokeColor="#000000"
-            app:strokeWidth="1dp"
-            android:text="Search" />
+            app:strokeWidth="1dp" />
 
 
 
     </LinearLayout>
 
+<!-- Remove member menu(apeers after search) -->
     <LinearLayout
         android:id="@+id/removeMemberCluster"
         android:layout_width="match_parent"
@@ -347,7 +361,7 @@
             android:enabled="false"
             android:hint="Regina" />
 
-
+<!-- Button container -->
         <LinearLayout
             android:id="@+id/removeButtonContainer"
             android:layout_width="wrap_content"
@@ -362,11 +376,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
                 android:textSize="16sp"
+                android:text="Cancel"
+
                 app:cornerRadius="5dp"
                 app:backgroundTint="#89CFF0"
                 app:strokeColor="#000000"
-                app:strokeWidth="1dp"
-                android:text="Cancel" />
+                app:strokeWidth="1dp" />
 
             <Button
                 android:id="@+id/btnRemoveMember"
@@ -375,6 +390,7 @@
                 android:layout_marginHorizontal="12dp"
                 android:text="DELETE Member"
                 android:textSize="16sp"
+
                 app:backgroundTint="#A81B1B"
                 app:cornerRadius="5dp"
                 app:strokeColor="#000000"
@@ -387,5 +403,6 @@
     </LinearLayout>
 
     </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

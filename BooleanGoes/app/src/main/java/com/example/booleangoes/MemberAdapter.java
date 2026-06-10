@@ -44,14 +44,20 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.MemberView
         holder.textMemberCity.setText("City: " + member.city);
 
         holder.memberDetailsLayout.setVisibility(View.GONE);
+        holder.btnEditMemberItem.setVisibility(View.GONE);
+        holder.btnRemoveMemberItem.setVisibility(View.GONE);
         holder.btnExpandMember.setText("▼");
 
         holder.btnExpandMember.setOnClickListener(v -> {
             if (holder.memberDetailsLayout.getVisibility() == View.VISIBLE) {
                 holder.memberDetailsLayout.setVisibility(View.GONE);
+                holder.btnEditMemberItem.setVisibility(View.GONE);
+                holder.btnRemoveMemberItem.setVisibility(View.GONE);
                 holder.btnExpandMember.setText("▼");
             } else {
                 holder.memberDetailsLayout.setVisibility(View.VISIBLE);
+                holder.btnEditMemberItem.setVisibility(View.VISIBLE);
+                holder.btnRemoveMemberItem.setVisibility(View.VISIBLE);
                 holder.btnExpandMember.setText("▲");
             }
         });
